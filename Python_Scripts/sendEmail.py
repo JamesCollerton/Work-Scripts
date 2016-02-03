@@ -5,16 +5,19 @@ import requests
 # String constants to be printed to console.
 
 ERROR_WRONG_NUM_COMMAND_LINE_ARGS = "\nError, wrong number of command line arguments.\n"
-ERROR_INVALID_RECIPIENT = "\nError, invalid recipient."
+ERROR_INVALID_RECIPIENT = "\nError, invalid recipient.\n"
+ERROR_INVALID_COMMAND_TYPE = "\nError, invalid command type.\n"
+
 SUCCESS_MAIL_SENT = "\nSuccess, message sent\n"
 
 # ------------------------------------------------------------------------------
 # Integer constants.
 
 ERROR_CODE = 1
-NUM_NECCESSARY_COMMAND_LINE_ARGS = 3
-RECIPIENT_INDEX = 1
-MESSAGE_INDEX = 2
+NUM_NECCESSARY_COMMAND_LINE_ARGS = 4
+RECIPIENT_INDEX = 2
+MESSAGE_INDEX = 3
+COMMAND_TYPE_INDEX = 1
 
 # ------------------------------------------------------------------------------
 # List of email addresses to be accessed. The dictionary keys are passed to
@@ -24,6 +27,10 @@ emailAddresses = {'MeWork' : 'James.Collerton@thorogood.com',
                   'CharlotteWork' : 'Charlotte.Emms@phgroup.com',
                   'MeLive' : 'JamesCollerton@live.co.uk',
                   'MeGmail' : 'jc1175@my.bristol.ac.uk'}
+
+commandTypeOptions = {'SendMail' : 'SendMail', 
+                      'BusyAndImportant' : 'BusyAndImportant',
+                      'CallMe' : 'CallMe'}
 
 # ------------------------------------------------------------------------------
 # Functions
@@ -39,11 +46,29 @@ def getCommandLineArgs():
 
     return(commandLineArgs) 
 
+# Used to get what type of command we want to run from the command line.
+def getCommandTypeFromCommandLineArgs(commandLineArgs):
+
+    commandType = commandLineArgs[COMMAND_TYPE_INDEX]
+
+    if commandType in commandTypeOptions:
+        return(commandType)
+    else:
+        print(ERROR_INVALID_COMMAND_TYPE)
+        sys.exit(ERROR_CODE)
+
+def sendMailFunctions(commandLineArgs):
+
+    recipient = getRecipientFromCommandLineArgs(commandLineArgs)
+    message = getMessageFromCommandLineArgs(commandLineArgs)
+    sendEmail(recipient, message)
+    print(SUCCESS_MAIL_SENT)
+
 # Gets recipient from command line, then checks it's in the emails array.
 def getRecipientFromCommandLineArgs(commandLineArgs):
 
     recipient = commandLineArgs[RECIPIENT_INDEX]
-
+    
     if recipient in emailAddresses:
         return(emailAddresses[recipient])
     else:
@@ -56,6 +81,10 @@ def getMessageFromCommandLineArgs(commandLineArgs):
     message = commandLineArgs[MESSAGE_INDEX]
 
     return(message)
+
+def busyAndImportantFunctions(commandLineArgs):
+
+    recipient = getRecipientFromCommandLineArgs
 
 # Sends an email using Mail-Gun. Pretty standard set up from the website.
 def sendEmail(recipient, message):
@@ -81,10 +110,12 @@ def sendEmail(recipient, message):
 def main():
 
     commandLineArgs = getCommandLineArgs()
-    recipient = getRecipientFromCommandLineArgs(commandLineArgs)
-    message = getMessageFromCommandLineArgs(commandLineArgs)
-    sendEmail(recipient, message)
-    print(SUCCESS_MAIL_SENT)
+    commandType = getCommandTypeFromCommandLineArgs(commandLineArgs)
+
+    if(commandType == commandTypeOptions['SendMail']):
+        sendMailFunctions(commandLineArgs)
+    else if(commandType == commandTypeOptions['BusyAndImportant']):
+        busyAndImportantFunctions(commandLineArgs)
 
 if __name__ == "__main__":
     main()
