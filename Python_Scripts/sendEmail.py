@@ -114,7 +114,7 @@ def main():
 
     if(commandType == commandTypeOptions['SendMail']):
         sendMailFunctions(commandLineArgs)
-    else if(commandType == commandTypeOptions['BusyAndImportant']):
+    elif(commandType == commandTypeOptions['BusyAndImportant']):
         busyAndImportantFunctions(commandLineArgs)
 
 if __name__ == "__main__":
