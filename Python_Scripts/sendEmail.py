@@ -13,11 +13,15 @@ SUCCESS_MAIL_SENT = "\nSuccess, message sent\n"
 # ------------------------------------------------------------------------------
 # Integer constants.
 
-ERROR_CODE = 1
-NUM_NECCESSARY_COMMAND_LINE_ARGS = 4
-RECIPIENT_INDEX = 2
+ERROR_CODE = 1                          # So 0 is not returned on error.
+NUM_NECCESSARY_COMMAND_LINE_ARGS = 3    # Filename, command type and email address.
+NUM_NECCESSARY_COMMAND_LINE_ARGS_SEND_MAIL = 4
+RECIPIENT_INDEX = 2                     
 MESSAGE_INDEX = 3
 COMMAND_TYPE_INDEX = 1
+EMAIL_FROM = 2
+EMAIL_CONTENTS = 1
+EMAIL_SUBJECT = 0
 
 # ------------------------------------------------------------------------------
 # List of email addresses to be accessed. The dictionary keys are passed to
@@ -32,6 +36,9 @@ commandTypeOptions = {'SendMail' : 'SendMail',
                       'BusyAndImportant' : 'BusyAndImportant',
                       'CallMe' : 'CallMe'}
 
+single_email_subject = 'Command Line Email'
+single_email_from = 'jamescollerton@live.co.uk'
+
 # ------------------------------------------------------------------------------
 # Functions
 
@@ -40,7 +47,7 @@ def getCommandLineArgs():
     
     commandLineArgs = sys.argv
 
-    if(len(commandLineArgs) != NUM_NECCESSARY_COMMAND_LINE_ARGS):
+    if(len(commandLineArgs) < NUM_NECCESSARY_COMMAND_LINE_ARGS):
         print(ERROR_WRONG_NUM_COMMAND_LINE_ARGS)
         sys.exit(ERROR_CODE)
 
@@ -57,12 +64,20 @@ def getCommandTypeFromCommandLineArgs(commandLineArgs):
         print(ERROR_INVALID_COMMAND_TYPE)
         sys.exit(ERROR_CODE)
 
+# Functions for sending a single email
 def sendMailFunctions(commandLineArgs):
 
+    checkNumberOfCommandLineArgs(commandLineArgs)
     recipient = getRecipientFromCommandLineArgs(commandLineArgs)
     message = getMessageFromCommandLineArgs(commandLineArgs)
-    sendEmail(recipient, message)
+    sendEmail(recipient, message, single_email_subject, single_email_from)
     print(SUCCESS_MAIL_SENT)
+
+def checkNumberOfCommandLineArgs(commandLineArgs):
+
+    if(len(commandLineArgs) != NUM_NECCESSARY_COMMAND_LINE_ARGS_SEND_MAIL):
+        print(ERROR_WRONG_NUM_COMMAND_LINE_ARGS)
+        sys.exit(ERROR_CODE)
 
 # Gets recipient from command line, then checks it's in the emails array.
 def getRecipientFromCommandLineArgs(commandLineArgs):
@@ -82,26 +97,40 @@ def getMessageFromCommandLineArgs(commandLineArgs):
 
     return(message)
 
+# Functions for sending enough emails to fill up your inbox.
 def busyAndImportantFunctions(commandLineArgs):
 
     recipient = getRecipientFromCommandLineArgs(commandLineArgs)
     emailList = getEmailListFromTxtFile()
+    for email in emailList:
+        sendEmail(recipient, email[EMAIL_CONTENTS], email[EMAIL_SUBJECT], email[EMAIL_FROM])
 
+# Gets the emails from the txt file, splits it up and then sends it back as an array
 def getEmailListFromTxtFile():
 
-    print("a")
+    subjectEmailArray = []
+
+    with open('../bin/busyAndImportantEmails.txt', 'r') as content_file:
+        content = content_file.read()
+
+    emailsWithSubjects = content.split('||')
+
+    for email in emailsWithSubjects:
+        subjectEmailArray.append(email.split('|'))
+
+    return(subjectEmailArray)
 
 # Sends an email using Mail-Gun. Pretty standard set up from the website.
-def sendEmail(recipient, message):
+def sendEmail(recipient, message, subject, fromEmail):
 
     key = 'key-17a8bba64262bd0139ac29b6d77e6f58'
     sandbox = 'sandbox03d7770e45654ce5a58c47f7f8a49647.mailgun.org'
 
     request_url = 'https://api.mailgun.net/v2/{0}/messages'.format(sandbox)
     request = requests.post(request_url, auth=('api', key), data={
-        'from': 'jamescollerton@live.co.uk',
+        'from': fromEmail,
         'to': recipient,
-        'subject': 'Check request!',
+        'subject': subject,
         'text': message
     })
 
