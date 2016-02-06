@@ -84,7 +84,12 @@ def getMessageFromCommandLineArgs(commandLineArgs):
 
 def busyAndImportantFunctions(commandLineArgs):
 
-    recipient = getRecipientFromCommandLineArgs
+    recipient = getRecipientFromCommandLineArgs(commandLineArgs)
+    emailList = getEmailListFromTxtFile()
+
+def getEmailListFromTxtFile():
+
+    print("a")
 
 # Sends an email using Mail-Gun. Pretty standard set up from the website.
 def sendEmail(recipient, message):
