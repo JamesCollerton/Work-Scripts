@@ -1,31 +1,24 @@
 import sys
 import json
 from flask import Flask
-
-# Download the library from twilio.com/docs/libraries
 from twilio.rest import TwilioRestClient
 
-# app = Flask(__name__)
- 
-# @app.route("/")
+# Super short script for making calls to my phone using Twilio.
 
-# def hello():
-    # return "Hello World!"
-
+# Makes a call using the details given in an untracked .json file
 def makeCall(callDetails):
 
-	# Get these credentials from http://twilio.com/user/account
 	account_sid = callDetails["SID"]
 	auth_token = callDetails["AuthToken"]
 	to_number = callDetails["myNum"]
 	from_number = callDetails["twilioNum"]
 	client = TwilioRestClient(account_sid, auth_token)
 	 
-	# Make the call
-	call = client.calls.create(to=to_number,  # Any phone number
-	                           from_=from_number, # Must be a valid Twilio number
+	call = client.calls.create(to=to_number,  
+	                           from_=from_number, 
 	                           url="http://twimlets.com/holdmusic?Bucket=com.twilio.music.ambient")
 
+# Gets the call details from the untracked .json file
 def getCallDetails():
 
 	with open('../Ignore/phoneDetails.json') as data_file:    
@@ -33,20 +26,11 @@ def getCallDetails():
 
 	return(callDetails)
 
+# Short main, gets details from .json then uses them to make the call.
 def main():
 
 	callDetails = getCallDetails()
 	makeCall(callDetails)
-	# app.run(debug=True)
  
 if __name__ == "__main__":
 	main()
-
-# def main():
-
-# 	print("Hello")
-
-
-
-# if __name__ == "__main__":
-#     main()
