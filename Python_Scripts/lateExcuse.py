@@ -1,15 +1,27 @@
 import requests
 import sys
 
-EMAIL_CONTENTS = "Hi <NAME>,\n\nI'm really sorry, but the <TUBE> line has a <STATUS>" + \
+from mailGunClient import *
+
+EMAIL_CONTENTS = "Hi <NAME>,\n\nI'm really sorry, but the <TUBE> line has a <STATUS>. " + \
 				 "I will be running a few minutes late, but hopefully not too long!" + \
 				 "\n\nBest,\n\nJames"
 
 NO_DELAYED_TUBES = "\n\nNo tubes are delayed! You need a different excuse!\n\n"
 
+ERROR_NO_COMMAND_LINE_ARGUMENTS = "\n\nInsufficient command line arguments.\n\n"
+
 ERROR_CODE = 1
 
-def getCommandLineArg():
+def getCommandLineArg(commandLineArgs):
+
+	try:
+		recipientName = commandLineArgs[1]
+	except:
+		print(ERROR_NO_COMMAND_LINE_ARGUMENTS)
+		sys.exit(ERROR_CODE)
+
+	return(recipientName)
 
 def getTubeStatusJson():
 
@@ -44,21 +56,22 @@ def getDelayedTube(tubeStatusArray):
 	print(NO_DELAYED_TUBES)
 	sys.exit(ERROR_CODE)
 
-def createEmailString(tubeStatus):
+def createEmailString(tubeStatus, recipientName):
 
 	emailString = EMAIL_CONTENTS.replace('<TUBE>', tubeStatus['name'])
 	emailString = emailString.replace('<STATUS>', tubeStatus['lineStatus'].lower())
+	emailString = emailString.replace('<NAME>', recipientName)
 
 	return(emailString)
 
 def main():
 
-	recipientName = getCommandLineArg()
+	recipientName = getCommandLineArg(sys.argv)
 	tubeStatusJson = getTubeStatusJson()
 	tubeStatusArray = getTubeInfo(tubeStatusJson)
 	tubeStatus = getDelayedTube(tubeStatusArray)
-	emailString = createEmailString(tubeStatus)
-	print(emailString)
+	emailString = createEmailString(tubeStatus, recipientName)
+	sendEmail('jc1175@my.bristol.ac.uk', emailString, "Testing", 'jc1175@my.bristol.ac.uk')
 
 if __name__ == "__main__":
     main()
