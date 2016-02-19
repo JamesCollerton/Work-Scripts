@@ -1,5 +1,6 @@
 import requests
 import sys
+import json
 
 # Imports the sendEmail function from the mailGunClient.py file
 from mailGunClient import *
@@ -9,6 +10,8 @@ from mailGunClient import *
 
 # Email string for the body of the email. Name, tube and status will all be dynamically
 # replaced.
+EMAIL_SUBJECT = "Sorry, running late!"
+EMAIL_FROM = "jc1175@my.bristol.ac.uk"
 EMAIL_CONTENTS = "Hi <NAME>,\n\nI'm really sorry, but the <TUBE> line has a <STATUS>. " + \
 				 "I will be running a few minutes late, but hopefully not too long!" + \
 				 "\n\nBest,\n\nJames"
@@ -18,6 +21,7 @@ NO_DELAYED_TUBES = "\n\nNo tubes are delayed! You need a different excuse!\n\n"
 
 # Printed if no recipient has been specified.
 ERROR_NO_COMMAND_LINE_ARGUMENTS = "\n\nInsufficient command line arguments.\n\n"
+ERROR_INVALID_RECIPIENT = "\n\nInvalid recipient name.\n\n"
 
 # Error code for printing on system exit.
 ERROR_CODE = 1
@@ -35,6 +39,30 @@ def getCommandLineArg(commandLineArgs):
 		sys.exit(ERROR_CODE)
 
 	return(recipientName)
+
+# Gets the dictionary of email addresses for use in sendMail
+def getEmailDictionary():
+
+	with open('../Ignore/emailDetails.json') as data_file:    
+	    emailJson = json.load(data_file)
+
+	return(emailJson)
+
+def getRecipientEmail(emailDictionary, recipientName):
+
+	recipientEmail = ""
+
+	try:
+		recipientEmail = emailDictionary[recipientName]
+	except:
+		print(ERROR_INVALID_RECIPIENT)
+		sys.exit(1)
+
+	if recipientEmail == "":
+		print(ERROR_INVALID_RECIPIENT)
+		sys.exit(1)
+
+	return(recipientEmail)
 
 # This gets the tube statuses using a request to the TFL API.
 def getTubeStatusJson():
@@ -90,11 +118,13 @@ def createEmailString(tubeStatus, recipientName):
 def main():
 
 	recipientName = getCommandLineArg(sys.argv)
+	emailDictionary = getEmailDictionary()
+	recipientEmail = getRecipientEmail(emailDictionary, recipientName)
 	tubeStatusJson = getTubeStatusJson()
 	tubeStatusArray = getTubeInfo(tubeStatusJson)
 	tubeStatus = getDelayedTube(tubeStatusArray)
 	emailString = createEmailString(tubeStatus, recipientName)
-	sendEmail('jc1175@my.bristol.ac.uk', emailString, "Testing", 'jc1175@my.bristol.ac.uk')
+	sendEmail(recipientEmail, emailString, EMAIL_SUBJECT, EMAIL_FROM)
 
 if __name__ == "__main__":
     main()
