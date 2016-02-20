@@ -1,7 +1,18 @@
 import sys
 import requests
 
+# Used to import the
 from mailGunClient import *
+
+# ------------------------------------------------------------------------------
+
+# sendEmail.py
+
+# This script is used for two things. The first is to fill up my inbox with 
+# impressive looking emails in case someone is reading over my shoulder. The
+# next is so that I can ping off emails from the command line.
+
+# ------------------------------------------------------------------------------
 
 # ------------------------------------------------------------------------------
 # String constants to be printed to console.
