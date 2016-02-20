@@ -3,7 +3,19 @@ import json
 from flask import Flask
 from twilio.rest import TwilioRestClient
 
-# Super short script for making calls to my phone using Twilio.
+# ------------------------------------------------------------------------------
+
+# callPhone.py
+
+# This script is used to call my phone if I need someone to go away. If someone
+# is waiting by my desk talking to me and I have something I need to be doing
+# then I invoke this script and it will ring my phone from an unknown number.
+
+# It uses flask and the Twilio API to ring my number. It takes the keys and my
+# number from an untracked file, then submits a request to the Twilio rest client
+# in order to make the call.
+
+# ------------------------------------------------------------------------------
 
 # Makes a call using the details given in an untracked .json file
 def makeCall(callDetails):

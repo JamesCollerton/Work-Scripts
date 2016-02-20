@@ -1,9 +1,10 @@
 import requests
 import sys
-import json
+# import json
 
 # Imports the sendEmail function from the mailGunClient.py file
 from mailGunClient import *
+from emailDictionary import *
 
 # ------------------------------------------------------------------------------ 
 # Global Variables
@@ -41,12 +42,12 @@ def getCommandLineArg(commandLineArgs):
 	return(recipientName)
 
 # Gets the dictionary of email addresses for use in sendMail
-def getEmailDictionary():
+# def getEmailDictionary():
 
-	with open('../Ignore/emailDetails.json') as data_file:    
-	    emailJson = json.load(data_file)
+# 	with open('../Ignore/emailDetails.json') as data_file:    
+# 	    emailJson = json.load(data_file)
 
-	return(emailJson)
+# 	return(emailJson)
 
 def getRecipientEmail(emailDictionary, recipientName):
 
