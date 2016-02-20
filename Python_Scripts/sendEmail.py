@@ -1,8 +1,9 @@
 import sys
 import requests
 
-# Used to import the
+# Used to import the functions for sending emails and getting the email dictionary
 from mailGunClient import *
+from emailDictionary import *
 
 # ------------------------------------------------------------------------------
 
@@ -40,10 +41,7 @@ EMAIL_SUBJECT = 0
 # List of email addresses to be accessed. The dictionary keys are passed to
 # the program on the command line.
 
-emailAddresses = {'MeWork' : 'James.Collerton@thorogood.com',
-                  'CharlotteWork' : 'Charlotte.Emms@phgroup.com',
-                  'MeLive' : 'JamesCollerton@live.co.uk',
-                  'MeGmail' : 'jc1175@my.bristol.ac.uk'}
+# emailAddresses = {}
 
 commandTypeOptions = {'SendMail' : 'SendMail', 
                       'BusyAndImportant' : 'BusyAndImportant',
@@ -78,10 +76,10 @@ def getCommandTypeFromCommandLineArgs(commandLineArgs):
         sys.exit(ERROR_CODE)
 
 # Functions for sending a single email
-def sendMailFunctions(commandLineArgs):
+def sendMailFunctions(commandLineArgs, emailAddresses):
 
     checkNumberOfCommandLineArgs(commandLineArgs)
-    recipient = getRecipientFromCommandLineArgs(commandLineArgs)
+    recipient = getRecipientFromCommandLineArgs(commandLineArgs, emailAddresses)
     message = getMessageFromCommandLineArgs(commandLineArgs)
     sendEmail(recipient, message, single_email_subject, single_email_from)
     print(SUCCESS_MAIL_SENT)
@@ -93,7 +91,7 @@ def checkNumberOfCommandLineArgs(commandLineArgs):
         sys.exit(ERROR_CODE)
 
 # Gets recipient from command line, then checks it's in the emails array.
-def getRecipientFromCommandLineArgs(commandLineArgs):
+def getRecipientFromCommandLineArgs(commandLineArgs, emailAddresses):
 
     recipient = commandLineArgs[RECIPIENT_INDEX]
     
@@ -111,9 +109,9 @@ def getMessageFromCommandLineArgs(commandLineArgs):
     return(message)
 
 # Functions for sending enough emails to fill up your inbox.
-def busyAndImportantFunctions(commandLineArgs):
+def busyAndImportantFunctions(commandLineArgs, emailAddresses):
 
-    recipient = getRecipientFromCommandLineArgs(commandLineArgs)
+    recipient = getRecipientFromCommandLineArgs(commandLineArgs, emailAddresses)
     emailList = getEmailListFromTxtFile()
     for email in emailList:
         sendEmail(recipient, email[EMAIL_CONTENTS], email[EMAIL_SUBJECT], email[EMAIL_FROM])
@@ -143,12 +141,13 @@ def getEmailListFromTxtFile():
 def main():
 
     commandLineArgs = getCommandLineArgs()
+    emailAddresses = getEmailDictionary()
     commandType = getCommandTypeFromCommandLineArgs(commandLineArgs)
 
     if(commandType == commandTypeOptions['SendMail']):
-        sendMailFunctions(commandLineArgs)
+        sendMailFunctions(commandLineArgs, emailAddresses)
     elif(commandType == commandTypeOptions['BusyAndImportant']):
-        busyAndImportantFunctions(commandLineArgs)
+        busyAndImportantFunctions(commandLineArgs, emailAddresses)
 
 if __name__ == "__main__":
     main()
