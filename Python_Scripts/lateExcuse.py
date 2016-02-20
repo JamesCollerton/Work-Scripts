@@ -6,6 +6,16 @@ import sys
 from mailGunClient import *
 from emailDictionary import *
 
+# ------------------------------------------------------------------------------
+
+# lateExcuse.py
+
+# This script is used with the TFL API to scan which tubes are delayed, then
+# automatically ping off an email to the argument given with the function 
+# explaining that I am going to be late to my meeting.
+
+# ------------------------------------------------------------------------------
+
 # ------------------------------------------------------------------------------ 
 # Global Variables
 
@@ -13,7 +23,7 @@ from emailDictionary import *
 # replaced.
 EMAIL_SUBJECT = "Sorry, running late!"
 EMAIL_FROM = "jc1175@my.bristol.ac.uk"
-EMAIL_CONTENTS = "Hi <NAME>,\n\nI'm really sorry, but the <TUBE> line has a <STATUS>. " + \
+EMAIL_CONTENTS = "Hi <NAME>,\n\nI'm really sorry, but the <TUBE> line has <STATUS>. " + \
 				 "I will be running a few minutes late, but hopefully not too long!" + \
 				 "\n\nBest,\n\nJames"
 

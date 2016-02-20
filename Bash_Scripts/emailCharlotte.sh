@@ -8,4 +8,3 @@
 # ------------------------------------------------------------------------------
 
 python ../Python_Scripts/sendEmail.py SendMail MeGmail "$@"
-
