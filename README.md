@@ -2,8 +2,6 @@
 
 These are a set of scripts I made for fun to use at work, they do things like call my phone and send me emails.
 
-As featured on Reddit: https://www.reddit.com/r/Python/comments/4edpl0/how_do_you_use_python_to_automate_tasks_in_life/
-
 There are basically three main pieces of functionality:
 
 - The first one is used to call my phone from the command line with a dummy number. If someone is annoying me at my desk I run it and pretend it is a client call. 'Oh sorry mate! I'd love to hear more about that, but duty calls...'
